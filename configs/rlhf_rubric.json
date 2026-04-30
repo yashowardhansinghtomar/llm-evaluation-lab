@@ -1,0 +1,40 @@
+{
+  "name": "RLHF response quality rubric",
+  "score_min": 1,
+  "score_max": 5,
+  "dimensions": {
+    "correctness": {
+      "weight": 0.3,
+      "description": "Factual and technical accuracy"
+    },
+    "instruction_following": {
+      "weight": 0.25,
+      "description": "Compliance with explicit and implicit user constraints"
+    },
+    "reasoning_quality": {
+      "weight": 0.2,
+      "description": "Soundness, clarity, and edge-case handling"
+    },
+    "communication": {
+      "weight": 0.15,
+      "description": "Usefulness, structure, and concision"
+    },
+    "safety": {
+      "weight": 0.1,
+      "description": "Avoids harmful, misleading, or overconfident output"
+    }
+  },
+  "allowed_preferences": ["A", "B", "tie"],
+  "failure_tags": [
+    "incorrect_fact",
+    "missed_constraint",
+    "overconfident",
+    "unsafe_advice",
+    "incomplete",
+    "verbose",
+    "poor_structure",
+    "code_bug",
+    "hallucinated_api",
+    "weak_reasoning"
+  ]
+}
