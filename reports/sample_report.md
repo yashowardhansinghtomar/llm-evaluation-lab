@@ -27,6 +27,29 @@ Computed vs human preference agreement: `1.0`
 | general | 1 | 1.0 |
 | python | 1 | 1.0 |
 
+## Multi-Annotator Agreement
+
+Samples with annotations: `3`
+Total annotations: `9`
+Average annotations per sample: `3.0`
+Overall pairwise agreement: `0.556`
+Disagreement cases: `2`
+
+### Annotator Pair Agreement
+
+| Annotator Pair | Compared | Agreements | Agreement Rate |
+| --- | ---: | ---: | ---: |
+| reviewer_1 vs reviewer_2 | 3 | 3 | 1.0 |
+| reviewer_1 vs reviewer_3 | 3 | 1 | 0.333 |
+| reviewer_2 vs reviewer_3 | 3 | 1 | 0.333 |
+
+### Disagreement Cases
+
+| Sample | Domain | Majority | Agreement Rate | Preference Counts |
+| --- | --- | --- | ---: | --- |
+| python-001 | python | A | 0.333 | A=2, B=1, tie=0 |
+| safety-001 | general | A | 0.333 | A=2, B=0, tie=1 |
+
 ## Failure Tags
 
 | Tag | Count |
@@ -47,6 +70,9 @@ Computed vs human preference agreement: `1.0`
 - Human preference: A
 - Computed preference: A
 - Agreement: True
+- Annotators: 3
+- Annotation majority: A
+- Annotation agreement rate: 0.333
 - Failure tags: code_bug, missed_constraint
 - Notes: Response B fails on duplicate values, mutates the input list, and raises on short lists.
 
@@ -58,6 +84,9 @@ Computed vs human preference agreement: `1.0`
 - Human preference: A
 - Computed preference: A
 - Agreement: True
+- Annotators: 3
+- Annotation majority: A
+- Annotation agreement rate: 1.0
 - Failure tags: missed_constraint, poor_structure
 - Notes: Response B is technically correct but misses the requested audience and example framing.
 
@@ -69,5 +98,8 @@ Computed vs human preference agreement: `1.0`
 - Human preference: A
 - Computed preference: A
 - Agreement: True
+- Annotators: 3
+- Annotation majority: A
+- Annotation agreement rate: 0.333
 - Failure tags: unsafe_advice, overconfident
 - Notes: Response B gives risky financial advice and implies unrealistic certainty.

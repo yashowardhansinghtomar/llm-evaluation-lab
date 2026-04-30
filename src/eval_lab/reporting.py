@@ -37,6 +37,46 @@ def render_markdown(summary, rubric):
     for domain, data in summary["domain_summary"].items():
         lines.append(f"| {domain} | {data['samples']} | {data['agreement_rate']} |")
 
+    multi = summary.get("multi_annotator", {})
+    lines.extend(
+        [
+            "",
+            "## Multi-Annotator Agreement",
+            "",
+            f"Samples with annotations: `{multi.get('samples_with_annotations', 0)}`",
+            f"Total annotations: `{multi.get('total_annotations', 0)}`",
+            f"Average annotations per sample: `{multi.get('average_annotations_per_sample', 0)}`",
+            f"Overall pairwise agreement: `{multi.get('overall_pairwise_agreement')}`",
+            f"Disagreement cases: `{multi.get('disagreement_case_count', 0)}`",
+            "",
+            "### Annotator Pair Agreement",
+            "",
+        ]
+    )
+    pair_agreement = multi.get("annotator_pair_agreement", {})
+    if pair_agreement:
+        lines.extend(["| Annotator Pair | Compared | Agreements | Agreement Rate |", "| --- | ---: | ---: | ---: |"])
+        for pair, data in pair_agreement.items():
+            lines.append(
+                f"| {pair} | {data['compared']} | {data['agreements']} | {data['agreement_rate']} |"
+            )
+    else:
+        lines.append("No annotator pairs available.")
+
+    lines.extend(["", "### Disagreement Cases", ""])
+    disagreement_cases = multi.get("disagreement_cases", [])
+    if disagreement_cases:
+        lines.extend(["| Sample | Domain | Majority | Agreement Rate | Preference Counts |", "| --- | --- | --- | ---: | --- |"])
+        for case in disagreement_cases:
+            counts = case["preference_counts"]
+            count_text = f"A={counts['A']}, B={counts['B']}, tie={counts['tie']}"
+            lines.append(
+                f"| {case['id']} | {case['domain']} | {case['majority_preference']} | "
+                f"{case['agreement_rate']} | {count_text} |"
+            )
+    else:
+        lines.append("No disagreement cases.")
+
     lines.extend(["", "## Failure Tags", "", "| Tag | Count |"])
     lines.append("| --- | ---: |")
     if summary["failure_counts"]:
@@ -58,6 +98,9 @@ def render_markdown(summary, rubric):
                 f"- Human preference: {result['human_preference']}",
                 f"- Computed preference: {result['computed_preference']}",
                 f"- Agreement: {result['agreement']}",
+                f"- Annotators: {result['annotation_summary']['annotation_count']}",
+                f"- Annotation majority: {result['annotation_summary']['majority_preference']}",
+                f"- Annotation agreement rate: {result['annotation_summary']['agreement_rate']}",
                 f"- Failure tags: {tags}",
                 f"- Notes: {result['notes']}",
                 "",
@@ -65,4 +108,3 @@ def render_markdown(summary, rubric):
         )
 
     return "\n".join(lines).rstrip() + "\n"
-

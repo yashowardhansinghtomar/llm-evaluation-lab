@@ -23,10 +23,13 @@ LLM evaluation is not just asking which answer sounds better. Good evaluation ne
 - Dataset validation before scoring
 - Pairwise scoring for candidate `A` and candidate `B`
 - Computed-vs-human preference agreement
+- Optional multi-annotator labels
+- Pairwise annotator agreement and disagreement-case reporting
 - Domain-level breakdowns
 - Failure-tag counts
 - Markdown and JSON report output
 - Unit tests for scoring, validation, and CLI behavior
+- GitHub Actions CI workflow for tests, validation, and sample report generation
 
 ## Project Structure
 
@@ -37,6 +40,7 @@ LLM evaluation is not just asking which answer sounds better. Good evaluation ne
 |-- data/
 |   `-- examples.jsonl
 |-- docs/
+|   |-- ANNOTATOR_AGREEMENT.md
 |   `-- DATASET_SCHEMA.md
 |-- reports/
 |   |-- sample_report.json
@@ -87,12 +91,22 @@ Each JSONL row contains one pairwise evaluation example:
     }
   },
   "preferred": "A",
+  "annotations": [
+    {
+      "annotator": "reviewer_1",
+      "preferred": "A",
+      "confidence": 0.96,
+      "failure_tags": ["code_bug", "missed_constraint"],
+      "notes": "A handles uniqueness and short lists."
+    }
+  ],
   "failure_tags": ["code_bug", "missed_constraint"],
   "notes": "Response B fails on duplicate values."
 }
 ```
 
 See [docs/DATASET_SCHEMA.md](docs/DATASET_SCHEMA.md) for the full schema and validation rules.
+See [docs/ANNOTATOR_AGREEMENT.md](docs/ANNOTATOR_AGREEMENT.md) for multi-annotator metrics.
 
 ## Quick Start
 
@@ -126,14 +140,23 @@ Install as a local CLI:
 
 ```bash
 pip install -e .
-llm-eval-lab --rubric configs/rlhf_rubric.json validate data/examples.jsonl
+llm-eval-lab --rubric configs/rlhf_rubric.json report data/examples.jsonl
 ```
+
+## Repository Quality
+
+- [ROADMAP.md](ROADMAP.md) explains how the project can mature toward a production-style evaluation workflow.
+- [CONTRIBUTING.md](CONTRIBUTING.md) documents local setup and contribution expectations.
+- [SECURITY.md](SECURITY.md) documents data-handling rules for prompts, eval data, and credentials.
+- `.github/workflows/ci.yml` runs tests and sample CLI checks on GitHub Actions.
 
 ## What The Report Shows
 
 - Human preference distribution
 - Computed preference distribution
 - Computed-vs-human agreement rate
+- Multi-annotator pairwise agreement
+- Disagreement cases for review
 - Average candidate scores by dimension
 - Domain-level agreement
 - Failure-tag counts
@@ -149,6 +172,7 @@ See:
 - RLHF response comparison practice
 - Prompt regression testing
 - Human evaluator training
+- Annotator agreement review
 - Private eval set reporting
 - Failure-mode analysis for LLM apps
 - Lightweight model-output QA before building a larger evaluation pipeline

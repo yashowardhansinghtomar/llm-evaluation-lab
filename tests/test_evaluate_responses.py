@@ -35,12 +35,24 @@ class EvaluateResponsesTest(unittest.TestCase):
         result = evaluate_example(self.examples[0], self.rubric)
         self.assertEqual(result["computed_preference"], "A")
         self.assertTrue(result["agreement"])
+        self.assertEqual(result["annotation_summary"]["annotation_count"], 3)
+        self.assertEqual(result["annotation_summary"]["majority_preference"], "A")
+        self.assertTrue(result["annotation_summary"]["disagreement"])
 
     def test_summary_tracks_agreement_and_failure_tags(self):
         summary = summarize(self.examples, self.rubric)
         self.assertEqual(summary["sample_count"], 3)
         self.assertEqual(summary["agreement_rate"], 1.0)
         self.assertEqual(summary["failure_counts"]["missed_constraint"], 2)
+        self.assertEqual(summary["multi_annotator"]["samples_with_annotations"], 3)
+        self.assertEqual(summary["multi_annotator"]["total_annotations"], 9)
+        self.assertEqual(summary["multi_annotator"]["disagreement_case_count"], 2)
+        self.assertEqual(
+            summary["multi_annotator"]["annotator_pair_agreement"][
+                "reviewer_1 vs reviewer_2"
+            ]["agreement_rate"],
+            1.0,
+        )
 
     def test_cli_writes_markdown_and_json_reports(self):
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -60,9 +72,9 @@ class EvaluateResponsesTest(unittest.TestCase):
             )
             self.assertEqual(exit_code, 0)
             self.assertIn("Domain Breakdown", markdown.read_text(encoding="utf-8"))
+            self.assertIn("Multi-Annotator Agreement", markdown.read_text(encoding="utf-8"))
             self.assertIn("agreement_rate", json_report.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
     unittest.main()
-

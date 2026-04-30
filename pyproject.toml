@@ -1,6 +1,6 @@
 [project]
 name = "llm-evaluation-lab"
-version = "0.1.0"
+version = "0.2.0"
 description = "Config-driven tools for pairwise LLM response evaluation"
 readme = "README.md"
 requires-python = ">=3.10"
